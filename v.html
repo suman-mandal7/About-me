@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suman Mandal | CS Student & Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#0f172a',
+                        accent: '#38bdf8',
+                        secondary: '#818cf8',
+                        glass: 'rgba(255, 255, 255, 0.05)',
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Utility for blinking cursor */
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Glass effect classes */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-glass {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Intersection Observer Transition Class */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Floating Shapes Background */
+        .bg-shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="relative antialiased">
+
+    <!-- Ambient Background Effects -->
+    <div class="bg-shape bg-purple-500 w-96 h-96 top-0 -left-20 animate-blob"></div>
+    <div class="bg-shape bg-cyan-500 w-80 h-80 bottom-0 -right-20 animate-blob animation-delay-2000"></div>
+    <div class="bg-shape bg-blue-600 w-64 h-64 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-blob animation-delay-4000"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 nav-glass transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="text-2xl font-bold font-mono text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+                        &lt;Suman /&gt;
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="hover:text-accent transition-colors duration-300 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#about" class="hover:text-accent transition-colors duration-300 px-3 py-2 rounded-md text-sm font-medium">About</a>
+                        <a href="#skills" class="hover:text-accent transition-colors duration-300 px-3 py-2 rounded-md text-sm font-medium">Skills</a>
+                        <a href="#projects" class="hover:text-accent transition-colors duration-300 px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+                        <a href="#contact" class="px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-300">Contact Me</a>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden glass-panel border-t border-gray-800 absolute w-full">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block hover:bg-white/10 px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="#about" class="block hover:bg-white/10 px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="#skills" class="block hover:bg-white/10 px-3 py-2 rounded-md text-base font-medium">Skills</a>
+                <a href="#projects" class="block hover:bg-white/10 px-3 py-2 rounded-md text-base font-medium">Projects</a>
+                <a href="#contact" class="block hover:bg-white/10 px-3 py-2 rounded-md text-base font-medium text-accent">Contact Me</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center pt-16 relative overflow-hidden">
+        <div class="text-center px-4 z-10">
+            <p class="text-accent font-mono mb-4 text-lg reveal">Hello, I am</p>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 reveal tracking-tight">
+                Suman Mandal
+            </h1>
+            <div class="text-2xl md:text-4xl text-gray-400 font-light mb-8 h-12 reveal">
+                I am a <span id="typing-text" class="text-white font-semibold"></span><span class="cursor-blink">|</span>
+            </div>
+            <p class="max-w-2xl mx-auto text-gray-400 mb-10 text-lg leading-relaxed reveal">
+                Computer Science Student passionate about building scalable web applications and solving complex algorithmic problems.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 reveal">
+                <a href="#projects" class="px-8 py-3 rounded-full bg-white text-dark font-bold hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2">
+                    <i class="fas fa-code"></i> View Work
+                </a>
+                <a href="#contact" class="px-8 py-3 rounded-full border border-white/30 hover:bg-white/10 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-2">
+                    <i class="fas fa-paper-plane"></i> Let's Talk
+                </a>
+            </div>
+        </div>
+        
+        <!-- Decorative Code Background (Subtle) -->
+        <div class="absolute opacity-10 text-xs font-mono top-20 right-10 hidden md:block pointer-events-none">
+            <pre class="text-accent">
+const developer = {
+    name: 'Suman',
+    passion: 'Coding',
+    isHiring: true,
+    drinkCoffee: () => {
+        return true;
+    }
+};
+            </pre>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-dark/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="reveal">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-2xl blur opacity-30"></div>
+                        <div class="relative glass-panel rounded-2xl p-1">
+                             <img src="Gemini_Generated_Image_8tdzir8tdzir8tdz.png" alt="Suman Mandal Profile Picture" class="rounded-xl w-full object-cover h-80 md:h-96 hover:scale-[1.01] transition-transform duration-500">
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6"><span class="text-accent font-mono text-xl">01.</span> About Me</h2>
+                    <p class="text-gray-300 leading-relaxed mb-6">
+                        I'm a Computer Science undergrad with a relentless curiosity for how things work under the hood. My journey started with simple HTML pages and has evolved into building full-stack applications.
+                    </p>
+                    <p class="text-gray-300 leading-relaxed mb-6">
+                        When I'm not debugging code or exploring new frameworks, I'm usually participating in Hackathons, contributing to Open Source, or solving LeetCode problems.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-4 font-mono text-sm text-gray-400">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-graduation-cap text-accent"></i> CS Undergrad
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-accent"></i> India
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-language text-accent"></i> English / Hindi
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-laptop-code text-accent"></i> Freelancer
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4"><span class="text-accent font-mono text-xl">02.</span> Tech Stack</h2>
+                <p class="text-gray-400">Technologies I want to learn</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 text-center">
+                <!-- Skill Cards -->
+                <div class="group reveal">
+                    <div class="glass-panel p-6 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-default border-transparent hover:border-cyan-500/30">
+                        <i class="fab fa-python text-4xl mb-3 text-yellow-400 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-medium">Python</h3>
+                    </div>
+                </div>
+                <div class="group reveal">
+                    <div class="glass-panel p-6 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-default border-transparent hover:border-cyan-500/30">
+                        <i class="fab fa-react text-4xl mb-3 text-cyan-400 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-medium">React</h3>
+                    </div>
+                </div>
+                <div class="group reveal">
+                    <div class="glass-panel p-6 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-default border-transparent hover:border-cyan-500/30">
+                        <i class="fab fa-js text-4xl mb-3 text-yellow-300 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-medium">JavaScript</h3>
+                    </div>
+                </div>
+                <div class="group reveal">
+                    <div class="glass-panel p-6 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-default border-transparent hover:border-cyan-500/30">
+                        <i class="fab fa-java text-4xl mb-3 text-red-500 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-medium">Java</h3>
+                    </div>
+                </div>
+                <div class="group reveal">
+                    <div class="glass-panel p-6 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-default border-transparent hover:border-cyan-500/30">
+                        <i class="fab fa-html5 text-4xl mb-3 text-orange-500 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-medium">HTML/CSS</h3>
+                    </div>
+                </div>
+                <div class="group reveal">
+                    <div class="glass-panel p-6 rounded-xl hover:bg-white/10 transition-all duration-300 cursor-default border-transparent hover:border-cyan-500/30">
+                        <i class="fas fa-pen-nib text-4xl mb-3 text-pink-400 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-medium">UI/UX</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 bg-dark/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-12 reveal">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-2"><span class="text-accent font-mono text-xl">03.</span> Featured Projects</h2>
+                    <p class="text-gray-400">What I've built recently</p>
+                </div>
+                <a href="#" class="hidden md:flex items-center gap-2 text-accent hover:text-white transition-colors">
+                    View Github <i class="fas fa-arrow-right text-sm"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project Card 1 -->
+                <div class="glass-panel rounded-xl overflow-hidden hover:-translate-y-2 transition-all duration-300 group reveal">
+                    <div class="relative h-48 overflow-hidden">
+                        <div class="absolute inset-0 bg-dark/20 group-hover:bg-transparent transition-colors z-10"></div>
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Project 1" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold group-hover:text-accent transition-colors">Data Visualizer</h3>
+                            <div class="flex gap-3 text-gray-400">
+                                <a href="#" class="hover:text-white"><i class="fab fa-github"></i></a>
+                                <a href="#" class="hover:text-white"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                            An interactive dashboard for visualizing complex algorithms and data structures in real-time. Helps students understand sorting and pathfinding.
+                        </p>
+                        <div class="flex flex-wrap gap-2 text-xs font-mono text-accent">
+                            <span class="bg-cyan-500/10 px-2 py-1 rounded">React</span>
+                            <span class="bg-cyan-500/10 px-2 py-1 rounded">D3.js</span>
+                            <span class="bg-cyan-500/10 px-2 py-1 rounded">Firebase</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div class="glass-panel rounded-xl overflow-hidden hover:-translate-y-2 transition-all duration-300 group reveal">
+                    <div class="relative h-48 overflow-hidden">
+                         <div class="absolute inset-0 bg-dark/20 group-hover:bg-transparent transition-colors z-10"></div>
+                        <img src="https://images.unsplash.com/photo-1557821552-17105176677c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Project 2" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold group-hover:text-accent transition-colors">E-Commerce API</h3>
+                            <div class="flex gap-3 text-gray-400">
+                                <a href="#" class="hover:text-white"><i class="fab fa-github"></i></a>
+                                <a href="#" class="hover:text-white"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                            A robust RESTful API built for a clothing brand. Features JWT authentication, payment gateway integration, and inventory management.
+                        </p>
+                        <div class="flex flex-wrap gap-2 text-xs font-mono text-accent">
+                            <span class="bg-cyan-500/10 px-2 py-1 rounded">Node.js</span>
+                            <span class="bg-cyan-500/10 px-2 py-1 rounded">MongoDB</span>
+                            <span class="bg-cyan-500/10 px-2 py-1 rounded">Express</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Card 3 -->
+                <div class="glass-panel rounded-xl overflow-hidden hover:-translate-y-2 transition-all duration-300 group reveal">
+                    <div class="relative h-48 overflow-hidden">
+                         <div class="absolute inset-0 bg-dark/20 group-hover:bg-transparent transition-colors z-10"></div>
+                        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Project 3" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold group-hover:text-accent transition-colors">AI Chatbot</h3>
+                            <div class="flex gap-3 text-gray-400">
+                                <a href="#" class="hover:text-white"><i class="fab fa-github"></i></a>
+                                <a href="#" class="hover:text-white"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                            An intelligent chatbot wrapper using OpenAI's API designed to help CS freshmen with basic programming syntax and logic errors.
+                        </p>
+                        <div class="flex flex-wrap gap-2 text-xs font-mono text-accent">
+                            <span class="bg-cyan-500/10 px-2 py-1 rounded">Python</span>
+                            <span class="bg-cyan-500/10 px-2 py-1 rounded">OpenAI</span>
+                            <span class="bg-cyan-500/10 px-2 py-1 rounded">Streamlit</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center md:hidden">
+                 <a href="#" class="inline-flex items-center gap-2 text-accent hover:text-white transition-colors font-medium">
+                    View Github <i class="fas fa-arrow-right text-sm"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 relative">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
+            <p class="text-accent font-mono mb-4">04. What's Next?</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">Get In Touch</h2>
+            <p class="text-gray-400 text-lg mb-10 leading-relaxed">
+                I am currently looking for internship opportunities. Whether you have a question or just want to say hi, my inbox is always open!
+            </p>
+            
+            <div class="glass-panel p-8 rounded-2xl mb-10 text-left max-w-xl mx-auto">
+                <form onsubmit="event.preventDefault(); alert('Thanks for the message! This is a demo.');">
+                    <div class="mb-4">
+                        <label class="block text-sm font-mono text-gray-400 mb-2">Name</label>
+                        <input type="text" class="w-full bg-dark/50 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-accent text-white transition-colors" placeholder="Your Name">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-mono text-gray-400 mb-2">Email</label>
+                        <input type="email" class="w-full bg-dark/50 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-accent text-white transition-colors" placeholder="name@example.com">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-mono text-gray-400 mb-2">Message</label>
+                        <textarea rows="4" class="w-full bg-dark/50 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-accent text-white transition-colors" placeholder="Hello Suman..."></textarea>
+                    </div>
+                    <button class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-3 rounded-lg hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-300">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+
+            <div class="flex justify-center space-x-8">
+                <a href="https://github.com/suman-mandal7" class="text-gray-400 hover:text-accent hover:-translate-y-1 transition-all duration-300" target="_blank">
+                    <i class="fab fa-github text-2xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-accent hover:-translate-y-1 transition-all duration-300">
+                    <i class="fab fa-linkedin text-2xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-accent hover:-translate-y-1 transition-all duration-300">
+                    <i class="fab fa-twitter text-2xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-accent hover:-translate-y-1 transition-all duration-300">
+                    <i class="fas fa-envelope text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-gray-800 text-center text-gray-500 text-sm font-mono">
+        <p>Designed & Built by Suman Mandal(with ai help)</p>
+        <p class="mt-2">© <span id="year"></span> All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Set Current Year
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when link is clicked
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Typing Animation
+        const words = ["Developer", "CS Student", "Problem Solver", "Tech Enthusiast"];
+        let i = 0;
+        let timer;
+
+        function typeWriter() {
+            const element = document.getElementById("typing-text");
+            const word = words[i];
+            let currentText = element.innerText;
+
+            if (currentText.length < word.length) {
+                element.innerText = word.substring(0, currentText.length + 1);
+                timer = setTimeout(typeWriter, 100); // Typing speed
+            } else {
+                setTimeout(deleteWriter, 2000); // Wait before deleting
+            }
+        }
+
+        function deleteWriter() {
+            const element = document.getElementById("typing-text");
+            const word = words[i];
+            let currentText = element.innerText;
+
+            if (currentText.length > 0) {
+                element.innerText = word.substring(0, currentText.length - 1);
+                timer = setTimeout(deleteWriter, 50); // Deleting speed
+            } else {
+                i = (i + 1) % words.length;
+                setTimeout(typeWriter, 500);
+            }
+        }
+
+        // Start typing animation
+        typeWriter();
+
+        // Scroll Reveal Animation
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealOnScroll = () => {
+            const windowHeight = window.innerHeight;
+            const elementVisible = 150;
+
+            revealElements.forEach((reveal) => {
+                const elementTop = reveal.getBoundingClientRect().top;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveal.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        // Trigger once on load
+        revealOnScroll();
+
+        // Navbar Blur on Scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-lg');
+            } else {
+                navbar.classList.remove('shadow-lg');
+            }
+        });
+    </script>
+</body>
+</html>
