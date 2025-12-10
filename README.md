@@ -12,7 +12,6 @@ I am a passionate learner dedicated to solving complex problems through technolo
 - 🌱 I’m currently on **[College]**
 - 👯 I’m looking to collaborate on **[Type of Projects]**
 - 💬 Ask me about **[Subject of Expertise]**
-- ⚡ Fun fact: **[Insert a fun hobby or fact]**
 
 ---
 
@@ -21,7 +20,7 @@ I am a passionate learner dedicated to solving complex problems through technolo
 * **Languages:** [Python, Java, C++, etc.]
 * **Frontend:** [HTML, CSS, React, etc.]
 * **Backend:** [Node.js, Django, etc.]
-* **Tools:** [Git, Docker, VS Code]
+* **Tools:** [Git, VS Code]
 
 ---
 
